@@ -4,15 +4,23 @@ namespace Larsvanteeffelen\SilverStripeGoogleSSO\Controller;
 
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
-use SilverStripe\Dev\Debug;
+use SilverStripe\Control\Session;
+use SilverStripe\Core\Environment;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Security\CMSSecurity;
+use SilverStripe\Security\Group;
+use SilverStripe\Security\IdentityStore;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use League\OAuth2\Client\Provider\Google;
 
 class GoogleLoginController extends Controller
 {
+    private static $url_segment = 'google-login';
+
     private static $url_handlers = [
-        'test//$Action' => '$Action',
+        'google-login//$Action' => '$Action',
     ];
     private static $allowed_actions = [
         'login',
@@ -21,29 +29,26 @@ class GoogleLoginController extends Controller
 
     public function login(HTTPRequest $request)
     {
-        Debug::show("test");
-
-        Debug::message("Wow, that's great");
-        phpinfo();
-        die();
         $provider = new Google([
-            'clientId'     => getenv('GOOGLE_CLIENT_ID'),
-            'clientSecret' => getenv('GOOGLE_CLIENT_SECRET'),
+            'clientId'     => Environment::getEnv('GOOGLE_CLIENT_ID'),
+            'clientSecret' => Environment::getEnv('GOOGLE_CLIENT_SECRET'),
             'redirectUri'  => $this->AbsoluteLink('callback')
         ]);
 
-        $authUrl = $provider->getAuthorizationUrl();
-        $this->getRequest()->getSession()->set('oauth2state', $provider->getState());
+        $authUrl = $provider->getAuthorizationUrl([
+            'scope' => ['openid', 'email', 'profile']
+        ]);
+        $request->getSession()->set('oauth2state', $provider->getState());
 
         return $this->redirect($authUrl);
     }
 
-    public function callback()
+    public function callback(HTTPRequest $request)
     {
         $provider = new Google([
-            'clientId'     => getenv('GOOGLE_CLIENT_ID'),
-            'clientSecret' => getenv('GOOGLE_CLIENT_SECRET'),
-            'redirectUri'  => $this->AbsoluteLink('callback')
+            'clientId' => Environment::getEnv('GOOGLE_CLIENT_ID'),
+            'clientSecret' => Environment::getEnv('GOOGLE_CLIENT_SECRET'),
+            'redirectUri' => $this->AbsoluteLink('callback')
         ]);
 
         if ($this->getRequest()->getSession()->get('oauth2state') !== $this->getRequest()->getVar('state')) {
@@ -58,9 +63,18 @@ class GoogleLoginController extends Controller
         $user = $provider->getResourceOwner($token);
         $googleUserData = $user->toArray();
 
-        // Handle the logic to either log in the user or create a new SilverStripe member
-        $member = Member::get()->filter('Email', $googleUserData['email'])->first();
+        $adminGroup = Group::get()->filter('Code', 'administrators')->first();
 
+        if (!$adminGroup) {
+            // Create the Administrators group if it doesn't exist
+            $adminGroup = Group::create();
+            $adminGroup->Title = 'Administrators';
+            $adminGroup->Code = 'administrators';
+            $adminGroup->write();
+            Permission::grant($adminGroup->ID, 'ADMIN');
+        }
+
+        $member = Member::get()->filter('Email', $googleUserData['email'])->first();
         if (!$member) {
             $member = Member::create();
             $member->FirstName = $googleUserData['given_name'];
@@ -69,7 +83,8 @@ class GoogleLoginController extends Controller
             $member->write();
         }
 
-        Security::setCurrentUser($member);
-        return $this->redirect(Security::config()->get('login_return_url'));
+        $adminGroup->Members()->add($member);
+        Injector::inst()->get(IdentityStore::class)->logIn($member);
+        return $this->redirect('/admin/pages');
     }
 }

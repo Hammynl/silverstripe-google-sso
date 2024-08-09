@@ -1,6 +1,8 @@
-Name: google-login-routes
-After: '#coreroutes'
+---
+Name: googlesso-routes
+After:
+  - '#coreroutes'
 ---
 SilverStripe\Control\Director:
   rules:
-    'google-login': 'Larsvanteeffelen\SilverStripeGoogleSSO\Controller\GoogleLoginController'
+    'google-login//$Action': 'Larsvanteeffelen\SilverStripeGoogleSSO\Controller\GoogleLoginController'
