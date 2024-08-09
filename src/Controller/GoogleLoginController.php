@@ -3,7 +3,8 @@
 namespace Larsvanteeffelen\SilverStripeGoogleSSO\Controller;
 
 use SilverStripe\Control\Controller;
-use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Dev\Debug;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 use League\OAuth2\Client\Provider\Google;
@@ -18,8 +19,11 @@ class GoogleLoginController extends Controller
         'callback'
     ];
 
-    public function login()
+    public function login(HTTPRequest $request)
     {
+        Debug::show("test");
+
+        Debug::message("Wow, that's great");
         phpinfo();
         die();
         $provider = new Google([

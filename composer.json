@@ -20,8 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SilverStripeModule\\Skeleton\\": "src/",
-            "SilverStripeModule\\Skeleton\\Tests\\": "tests/php/"
+            "Larsvanteeffelen\\": "src/",
         }
     },
     "extra": {

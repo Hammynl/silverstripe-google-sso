@@ -3,4 +3,4 @@ After: '#coreroutes'
 ---
 SilverStripe\Control\Director:
   rules:
-    'google-login': 'Larsvanteeffelen\SilverStripeGoogleSSO\Controller\GoogleLoginController\login'
+    'google-login': 'Larsvanteeffelen\SilverStripeGoogleSSO\Controller\GoogleLoginController'
