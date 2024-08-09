@@ -1,6 +1,6 @@
 {
-    "name": "larssvt/silverstripe-google-sso",
-    "description": "A skeleton for Silverstripe CMS modules.",
+    "name": "larsvanteeffelen/silverstripe-google-sso",
+    "description": "Silverstripe module for Google SSO",
     "type": "silverstripe-vendormodule",
     "keywords": [
         "silverstripe",
