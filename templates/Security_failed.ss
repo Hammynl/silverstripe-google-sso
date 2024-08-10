@@ -51,7 +51,7 @@
                 background-color: #0056b3;
             }
 
-            div > h1 {
+            div > h1, div > p {
                 text-align: center;
             }
 
@@ -91,7 +91,7 @@
                 color: #666;
             }
 
-            input[type="submit"] {
+            button {
                 background-color: #007bff;
                 color: white;
                 border: none;
@@ -102,7 +102,7 @@
                 font-size: 16px;
             }
 
-            input[type="submit"]:hover {
+            button:hover {
                 background-color: #0056b3;
             }
 
@@ -165,24 +165,20 @@
         </style>
     </head>
     <body>
+
         <div class="back-button-container">
             <a href="/" class="back-button">Back to homepage</a>
         </div>
-
-
         <div class="container">
             <div>
                 <h1>$SiteConfig.Title</h1>
-                $Form
-            </div>
 
-            <hr>
+                <hr>
 
-            <div>
-                <a href="/google-login/login">
-                    <button type="button" class="login-with-google-btn">
-                        Sign in with Google
-                    </button>
+                <p style="color: red;">$Error</p>
+
+                <a href="/admin">
+                    <button>Try again</button>
                 </a>
             </div>
         </div>
