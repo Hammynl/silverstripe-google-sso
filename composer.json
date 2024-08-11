@@ -6,7 +6,7 @@
         "silverstripe",
         "CMS",
         "SSO",
-        "Google",
+        "Google"
     ],
     "license": "MIT",
     "require": {
