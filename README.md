@@ -15,7 +15,7 @@ To install this module, you need to add it to your SilverStripe project. You can
 Alternatively, you can install it via composer:
 
 ```bash
-composer require larsvanteeffelen/silverstripe-googlesso
+composer require larsvanteeffelen/silverstripe-google-sso
 ```
 
 ## Configuration
