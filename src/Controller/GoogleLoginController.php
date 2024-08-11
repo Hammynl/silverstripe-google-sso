@@ -4,7 +4,6 @@ namespace Larsvanteeffelen\SilverStripeGoogleSSO\Controller;
 
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
-use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Environment;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\Group;
@@ -39,7 +38,7 @@ class GoogleLoginController extends Controller
         return $this->redirect($authUrl);
     }
 
-    public function callback(HTTPRequest $request): HTTPResponse
+    public function callback(HTTPRequest $request)
     {
         $session = $request->getSession();
         $provider = new Google([
