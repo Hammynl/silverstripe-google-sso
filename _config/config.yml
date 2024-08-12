@@ -1,1 +1,16 @@
 # see https://docs.silverstripe.org/en/developer_guides/configuration/configuration/
+
+SilverStripe\Core\Injector\Injector:
+  LoginRateLimiter:
+    class: SilverStripe\Control\Middleware\RateLimitMiddleware
+    properties:
+      ExtraKey: 'LoginRateLimiter'
+      MaxAttempts: 10
+      Decay: 1
+
+  GoogleLoginController:
+    class: SilverStripe\Control\Middleware\RequestHandlerMiddlewareAdapter
+    properties:
+      RequestHandler: '%$Larsvanteeffelen\SilverStripeGoogleSSO\Controller\GoogleLoginController'
+      Middlewares:
+        - '%$LoginRateLimiter'

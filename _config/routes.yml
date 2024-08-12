@@ -5,4 +5,4 @@ After:
 ---
 SilverStripe\Control\Director:
   rules:
-    'google-login//$Action': 'Larsvanteeffelen\SilverStripeGoogleSSO\Controller\GoogleLoginController'
+    'google-login//$Action': '%$GoogleLoginController'
