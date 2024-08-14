@@ -20,7 +20,21 @@ class GoogleAccountService
 
     public function isValidGoogleAccount(array $googleUserData): bool
     {
-        $allowed_emails = explode(",", Environment::getEnv('ALLOWED_EMAILS'));
-        return $googleUserData['email_verified'] && in_array($googleUserData['email'], $allowed_emails);
+        $allowedEmails = explode(",", Environment::getEnv('ALLOWED_EMAILS'));
+        if(
+            !array_key_exists('email_verified', $googleUserData)
+            || !$googleUserData['email_verified']
+            || empty($allowedEmails)
+        )  {
+            return false;
+        }
+
+        $userEmail = strtolower($googleUserData['email']);
+        foreach ($allowedEmails as $allowedEmail) {
+            if (fnmatch(strtolower($allowedEmail), $userEmail)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
