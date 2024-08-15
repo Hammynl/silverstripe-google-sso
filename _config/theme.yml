@@ -1,3 +1,7 @@
+---
+Before:
+  - '#login-forms'
+---
 SilverStripe\LoginForms\EnablerExtension:
   login_themes:
     - '$default'
