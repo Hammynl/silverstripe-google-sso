@@ -14,8 +14,7 @@ class AdminManagementService {
     public function createOrLoginSsoUser(array $googleUserData): void
     {
         $googleProvider = GoogleProvider::get()->filter([
-            'Sub' => $googleUserData['sub'],
-            'Email' => $googleUserData['email'],
+            'Sub' => $googleUserData['sub']
         ])->first();
 
         // If Member connected to provider does not exist, delete & clear provider
@@ -46,6 +45,20 @@ class AdminManagementService {
         }
 
         // Create group for Google SSO
+        $ssoGroup = $this->createOrGetSsoGroup();
+
+        // Add member to group
+        $member = $googleProvider->Member();
+        if (!$member->inGroup($ssoGroup)) {
+            $ssoGroup->Members()->add($member);
+        }
+
+        Injector::inst()->get(IdentityStore::class)->logIn($member, true);
+    }
+
+
+    public function createOrGetSsoGroup(): Group
+    {
         $ssoGroup = Group::get()->filter('Code', 'google-administrators')->first();
         if (!$ssoGroup) {
             $ssoGroup = Group::create();
@@ -55,14 +68,6 @@ class AdminManagementService {
             $ssoGroup->write();
             Permission::grant($ssoGroup->ID, 'ADMIN');
         }
-
-        // Add member to group
-        $member = $googleProvider->Member();
-        if (!$member->inGroup($ssoGroup)) {
-            $ssoGroup->Members()->add($member);
-        }
-
-        // Programmatically log in user
-        Injector::inst()->get(IdentityStore::class)->logIn($member, true);
+        return $ssoGroup;
     }
 }
