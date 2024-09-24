@@ -14,7 +14,3 @@ SilverStripe\Core\Injector\Injector:
       RequestHandler: '%$Larsvanteeffelen\SilverStripeGoogleSSO\Controller\GoogleLoginController'
       Middlewares:
         - '%$LoginRateLimiter'
-
-SilverStripe\Security\Member:
-  extensions:
-    - Larsvanteeffelen\SilverStripeGoogleSSO\Extension\MemberSsoExtension
