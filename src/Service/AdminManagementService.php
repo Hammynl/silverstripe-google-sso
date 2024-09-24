@@ -10,28 +10,39 @@ use SilverStripe\Security\Permission;
 
 class AdminManagementService {
 
-    public function createOrLoginAdminUser(string $firstName, string $lastName, string $email): void
+    public function createOrLoginSsoUser(array $googleUserData): void
     {
-        $adminGroup = Group::get()->filter('Code', 'administrators')->first();
-        if (!$adminGroup) {
-            $adminGroup = Group::create();
-            $adminGroup->Title = 'Administrators';
-            $adminGroup->Code = 'administrators';
-            $adminGroup->write();
-            Permission::grant($adminGroup->ID, 'ADMIN');
+
+        $ssoGroup = Group::get()->filter('Code', 'google-administrators')->first();
+        if (!$ssoGroup) {
+            $ssoGroup = Group::create();
+            $ssoGroup->Title = 'Google SSO Administrators';
+            $ssoGroup->Code = 'google-administrators';
+            $ssoGroup->Locked = true;
+            $ssoGroup->write();
+            Permission::grant($ssoGroup->ID, 'ADMIN');
         }
 
-        $member = Member::get()->filter('Email', $email)->first();
+        $existingMember = Member::get()->filter('Email', $googleUserData['email'])->first();
+        if($existingMember) {
+            $existingMember->Sub = $googleUserData['sub'];
+            $existingMember->write();
+        }
+
+        $member = Member::get()->filter('sub', $googleUserData['sub'])->first();
         if (!$member) {
             $member = Member::create();
-            $member->FirstName = $firstName;
-            $member->Surname = $lastName;
-            $member->Email = $email;
+            $member->Sub = $googleUserData['sub'];
+            $member->PictureUrl = $googleUserData['picture'];
+            $member->FirstName = $googleUserData['given_name'];
+            $member->Surname = $googleUserData['family_name'];
+            $member->Email = $googleUserData['email'];
+            $member->generateRandomPassword(128);
             $member->write();
         }
 
-        if (!$member->inGroup($adminGroup)) {
-            $adminGroup->Members()->add($member);
+        if (!$member->inGroup($ssoGroup)) {
+            $ssoGroup->Members()->add($member);
         }
 
         Injector::inst()->get(IdentityStore::class)->logIn($member, true);
