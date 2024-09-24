@@ -84,9 +84,8 @@
             </p>
         <% end_if %>
 
-        $Form
-
         <hr>
+
         <div class="google-button-div">
             <a href="/admin">
                 <button type="button" class="login-with-google-btn">
