@@ -42,7 +42,7 @@ class GoogleLoginController extends Controller
 
         if ($session->get('oauth2state') !== $request->getVar('state')) {
             $session->clear('oauth2state');
-            return $this->customise(['Error' => "State has been tampered with and declared invalid"])->renderWith('Security_failed');
+            return $this->customise(['Message' => "State has been tampered with and declared invalid"])->renderWith('Security_failed');
         }
 
         $token = $provider->getAccessToken('authorization_code', [
@@ -52,9 +52,9 @@ class GoogleLoginController extends Controller
         $googleUserData = $user->toArray();
 
         if(!$this->googleAccountService->isValidGoogleAccount($googleUserData)) {
-            return $this->customise(['Error' => "This Google account is unauthorized"])->renderWith('Security_failed');
-
+            return $this->customise(['Message' => "This Google account is unauthorized"])->renderWith('Security_failed');
         }
+
         $this->adminManagementService->createOrLoginAdminUser(
             $googleUserData['given_name'],
             $googleUserData['family_name'],
