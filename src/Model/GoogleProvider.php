@@ -11,7 +11,7 @@ class GoogleProvider extends DataObject
 
     private static $db = [
         'Sub' => 'Varchar(255)',
-        'Email' => 'Varchar(255)'
+        'PictureUrl' => 'Varchar(1024)'
     ];
 
     private static $has_one = [

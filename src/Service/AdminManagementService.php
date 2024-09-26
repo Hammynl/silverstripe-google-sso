@@ -27,7 +27,7 @@ class AdminManagementService {
         if(!$googleProvider) {
             $googleProvider = GoogleProvider::create();
             $googleProvider->Sub = $googleUserData['sub'];
-            $googleProvider->Email = $googleUserData['email'];
+            $googleProvider->PictureUrl = $googleUserData['picture'];
 
             // Get or create member
             $member = Member::get()->filter(['Email' => $googleUserData['email']])->first();
