@@ -115,21 +115,41 @@
 
         </main>
 
-        <footer class="silverstripe-brand">
+        <footer class="silverstripe-brand" id="clickable-logo">
             <% include SilverStripeLogo %>
         </footer>
 
         <script>
+            function toggleGoogleLoginButton() {
+                let button = document.getElementById('hidden-google-login');
+                if (button.style.display === "none") {
+                    button.style.display = "block";
+                } else {
+                    button.style.display = "none";
+                }
+            }
+
             document.addEventListener("keydown", (event) => {
                 if (event.ctrlKey && (event.key === "g" || event.key === "G")) {
-                    let button = document.getElementById('hidden-google-login')
-                    if (button.style.display === "none") {
-                        button.style.display = "block";
-                    } else {
-                        button.style.display = "none";
-                    }
+                    toggleGoogleLoginButton();
                 }
             });
+
+            let clickCount = 0;
+            function handleClick() {
+                clickCount++;
+                if (clickCount === 3) {
+                    toggleGoogleLoginButton();
+                    clickCount = 0;
+                }
+
+                setTimeout(() => {
+                    clickCount = 0;
+                }, 1000);
+            }
+
+            const targetElement = document.getElementById('clickable-logo');
+            targetElement.addEventListener('click', handleClick);
         </script>
     </body>
 </html>
