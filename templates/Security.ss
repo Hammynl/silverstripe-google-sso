@@ -61,10 +61,20 @@
                 box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 1px 1px rgba(0, 0, 0, .25);
             }
 
+            #hidden-google-login {
+                display: none;
+            }
+
             hr {
                 color: white;
                 background-color: white;
             }
+
+            #ForgotPassword {
+                display: none;
+            }
+
+
         </style>
     </head>
     <body
@@ -92,14 +102,15 @@
             <% end_if %>
 
             $Form
-
-            <hr>
-            <div class="google-button-div">
-                <a href="/google-login/login">
-                    <button type="button" class="login-with-google-btn">
-                        Sign in with Google
-                    </button>
-                </a>
+            <div id="hidden-google-login">
+                <hr>
+                <div class="google-button-div">
+                    <a href="/google-login/login">
+                        <button type="button" class="login-with-google-btn">
+                            Sign in with Google
+                        </button>
+                    </a>
+                </div>
             </div>
 
         </main>
@@ -107,5 +118,18 @@
         <footer class="silverstripe-brand">
             <% include SilverStripeLogo %>
         </footer>
+
+        <script>
+            document.addEventListener("keydown", (event) => {
+                if (event.ctrlKey && (event.key === "g" || event.key === "G")) {
+                    let button = document.getElementById('hidden-google-login')
+                    if (button.style.display === "none") {
+                        button.style.display = "block";
+                    } else {
+                        button.style.display = "none";
+                    }
+                }
+            });
+        </script>
     </body>
 </html>
