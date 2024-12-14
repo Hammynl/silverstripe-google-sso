@@ -4,15 +4,18 @@ namespace Larsvanteeffelen\SilverStripeGoogleSSO\Controller;
 
 use Larsvanteeffelen\SilverStripeGoogleSSO\Service\AdminManagementService;
 use Larsvanteeffelen\SilverStripeGoogleSSO\Service\GoogleAccountService;
+use League\OAuth2\Client\Provider\AbstractProvider;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Injector\Injector;
 
 class GoogleLoginController extends Controller
 {
-    private static $dependencies = [
-        'adminManagementService' => '%$' . AdminManagementService::class,
-        'googleAccountService' => '%$' . GoogleAccountService::class,
-    ];
+    private AbstractProvider $provider;
+
+    private AdminManagementService $adminManagementService;
+
+    private GoogleAccountService $googleAccountService;
 
     private static $url_segment = 'google-login';
 
@@ -24,33 +27,36 @@ class GoogleLoginController extends Controller
         'login',
         'callback'
     ];
+    public function __construct()
+    {
+        $this->adminManagementService = Injector::inst()->get(AdminManagementService::class);
+        $this->googleAccountService = Injector::inst()->get(GoogleAccountService::class);
+        $this->provider = $this->googleAccountService->getGoogleOAuthProvider($this->AbsoluteLink('callback'));
+        parent::__construct();
+    }
 
     public function login(HTTPRequest $request)
     {
         $session = $request->getSession();
-        $provider = $this->googleAccountService->getGoogleOAuthProvider($this->AbsoluteLink('callback'));
 
-        $authUrl = $provider->getAuthorizationUrl();
-        $session->set('oauth2state', $provider->getState());
+        $authUrl = $this->provider->getAuthorizationUrl();
+        $session->set('oauth2state', $this->provider->getState());
         return $this->redirect($authUrl);
     }
 
     public function callback(HTTPRequest $request)
     {
         $session = $request->getSession();
-        $provider = $this->googleAccountService->getGoogleOAuthProvider($this->AbsoluteLink('callback'));
-
         if ($session->get('oauth2state') !== $request->getVar('state')) {
             $session->clear('oauth2state');
             return $this->error("State has been tampered with and declared invalid");
         }
 
-        $token = $provider->getAccessToken('authorization_code', [
+        $token = $this->provider->getAccessToken('authorization_code', [
             'code' => $request->getVar('code')
         ]);
-        $user = $provider->getResourceOwner($token);
-        $googleUserData = $user->toArray();
 
+        $googleUserData = $this->provider->getResourceOwner($token)?->toArray();
         if(!$this->googleAccountService->isValidGoogleAccount($googleUserData)) {
             return $this->error("This Google account is unauthorized");
         }
@@ -59,7 +65,7 @@ class GoogleLoginController extends Controller
         return $this->redirect('/admin/pages');
     }
 
-    public function error(string $error)
+    private function error(string $error)
     {
         return $this->customise(['Message' => $error])->renderWith('Security_failed');
     }
