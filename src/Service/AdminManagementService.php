@@ -2,7 +2,7 @@
 
 namespace Larsvanteeffelen\SilverStripeGoogleSSO\Service;
 
-use Larsvanteeffelen\SilverStripeGoogleSSO\Model\GoogleProvider;
+use Larsvanteeffelen\SilverStripeGoogleSSO\Model\GoogleSsoProvider;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\Group;
 use SilverStripe\Security\IdentityStore;
@@ -35,9 +35,9 @@ class AdminManagementService {
         }
     }
 
-    private function getOrCreateGoogleProvider(array $googleUserData): GoogleProvider
+    private function getOrCreateGoogleProvider(array $googleUserData): GoogleSsoProvider
     {
-        $googleProvider = GoogleProvider::get()->filter(['Sub' => $googleUserData['sub']])->first();
+        $googleProvider = GoogleSsoProvider::get()->filter(['Sub' => $googleUserData['sub']])->first();
 
         if ($googleProvider && (!$googleProvider->Member() || !$googleProvider->Member()->exists())) {
             $googleProvider->delete();
@@ -45,7 +45,7 @@ class AdminManagementService {
         }
 
         if (!$googleProvider) {
-            $googleProvider = GoogleProvider::create();
+            $googleProvider = GoogleSsoProvider::create();
             $googleProvider->Sub = $googleUserData['sub'];
             $googleProvider->PictureUrl = $googleUserData['picture'];
             $googleProvider->write();
@@ -54,7 +54,7 @@ class AdminManagementService {
         return $googleProvider;
     }
 
-    private function getOrCreateMember(GoogleProvider $googleProvider, array $googleUserData): Member
+    private function getOrCreateMember(GoogleSsoProvider $googleProvider, array $googleUserData): Member
     {
         $member = $googleProvider->Member();
         if (!$member || !$member->exists()) {
