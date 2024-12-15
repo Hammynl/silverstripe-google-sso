@@ -32,5 +32,4 @@ class GoogleSsoProviderAdmin extends ModelAdmin
         }
         return $form;
     }
-
 }

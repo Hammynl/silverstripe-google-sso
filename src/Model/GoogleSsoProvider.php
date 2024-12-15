@@ -32,16 +32,6 @@ class GoogleSsoProvider extends DataObject
         'ImageThumbnail' => 'Picture'
     ];
 
-    public function getCMSFields()
-    {
-        $fields = parent::getCMSFields();
-
-        $fields->makeFieldReadonly('Sub');
-        $fields->makeFieldReadonly('PictureUrl');
-        $fields->makeFieldReadonly('MemberID');
-        return $fields;
-    }
-
     public function getImageThumbnail()
     {
         $image = Image::get()->where(["Title" => $this->Sub])->first() ?? Image::create();
@@ -53,5 +43,15 @@ class GoogleSsoProvider extends DataObject
     public function getFullName()
     {
         return $this->Member()->FirstName . ' ' . $this->Member()->LastName;
+    }
+
+    public function canCreate($member = null, $context = [])
+    {
+        return false;
+    }
+
+    public function canEdit($member = null)
+    {
+        return false;
     }
 }
