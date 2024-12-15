@@ -70,10 +70,6 @@
                 background-color: white;
             }
 
-            #ForgotPassword {
-                display: none;
-            }
-
 
         </style>
     </head>
@@ -145,7 +141,7 @@
 
                 setTimeout(() => {
                     clickCount = 0;
-                }, 1000);
+                }, 2500);
             }
 
             const targetElement = document.getElementById('clickable-logo');
