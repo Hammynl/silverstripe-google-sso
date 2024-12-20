@@ -37,6 +37,7 @@ class GoogleSsoProvider extends DataObject
         $image = Image::get()->where(["Title" => $this->Sub])->first() ?? Image::create();
         $image->setFromString(file_get_contents($this->PictureUrl), $this->Sub . ".png");
         $image->write();
+        $image->publishFile();
         return $image->CMSThumbnail();
     }
 
