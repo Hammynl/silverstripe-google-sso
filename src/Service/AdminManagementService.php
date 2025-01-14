@@ -47,9 +47,9 @@ class AdminManagementService {
         if (!$googleProvider) {
             $googleProvider = GoogleSsoProvider::create();
             $googleProvider->Sub = $googleUserData['sub'];
-            $googleProvider->PictureUrl = $googleUserData['picture'];
-            $googleProvider->write();
         }
+        $googleProvider->PictureUrl = $googleUserData['picture'];
+        $googleProvider->write();
 
         return $googleProvider;
     }
