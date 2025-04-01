@@ -59,7 +59,7 @@ These routes can be used if you want to create your own template. However, You c
 
 ### Usage
 
-1. Visit the `/admin` URL and click the 'Sign in with Google' button
+1. Visit the `/admin` URL and click the 'Sign in with Google' button. This button appears after clicking the SilverStripe logo 3 times or pressing 'CTRL + G'.
 2. If the user is authorized (i.e., their email is in the `ALLOWED_EMAILS` list), they will be logged in and redirected to the SilverStripe admin panel.
 3. If the user is not authorized, they will see an error message.
 
